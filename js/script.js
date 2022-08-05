@@ -78,7 +78,7 @@ function compare(event) {
         messageDiv.setAttribute("class", "messageDiv");
         if (element.textContent == allQuestion[questionIndex].answer) {
             score++;
-            messageDiv.textContent = "Correct! The answer is:  " + allQuestion[questionIndex].answer;
+            messageDiv.textContent = "Right! The answer is:  " + allQuestion[questionIndex].answer;
         } else {
             remainingSeconds = remainingSeconds - penalty;
             messageDiv.textContent = "Wrong! The correct answer is:  " + allQuestion[questionIndex].answer;
@@ -87,7 +87,7 @@ function compare(event) {
     } questionIndex++;
         if (questionIndex >= allQuestion.length) {
         allDone();
-        messageDiv.textContent = "End of quiz!" + " " + "You got  " + score + "/" + allQuestion.length + " Correct!";
+        messageDiv.textContent = "Quiz End!" + " " + "You got  " + score + "/" + allQuestion.length + " Correct!";
         } else {
         render(questionIndex);
     }
@@ -99,7 +99,7 @@ function allDone() {
   currentTime.innerHTML = "";
   var createH1 = document.createElement("h1");
   createH1.setAttribute("class", "createH1");
-  createH1.textContent = "All Done!"
+  createH1.textContent = "Code Quiz Ends!"
 
   allQuestionDiv.appendChild(createH1);
 
