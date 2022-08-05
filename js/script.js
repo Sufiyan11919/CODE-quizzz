@@ -1,64 +1,161 @@
-const allQuestions = [
+let allQuestion = [
     {
         title: "What is full form of CSS?",
-        a:"Cascading Style Source",
-        b:"Cascading Style Sheets",
-        c:"Cascading Source Sheets",
-        d:"Cascade Style Sheets",
-        answer: "ans2"
+        choices: ["Cascading Style Source", "Cascading Style Sheets", "Cascading Source Sheets", "Cascade Style Sheets"],
+        answer: "Cascading Style Sheets"
     },
     {
         title: "What is full form of HTML?",
-        a:"HyperText Markup Language",
-        b: "HyperText Markup List",
-        c:"HyperText Makeup Language",
-        d:"Hypertool Markup Language",
-        answer: "ans1"
+        choices: ["HyperText Markup Language", "HyperText Markup List", "HyperText Makeup Language", "Hypertool Markup Language"],
+        answer: "HyperText Markup Language"
     },
     {
         title: "What is full form of HTTP?",
-        a:"Hypertext Transfer protocol",
-        b: "Hypertext Testing Protocol",
-        c:"Hypertext Transfer Print",
-        d: "Hypertext testing Print",
-        answer: "ans1"
+        choices: ["Hypertext Transfer protocol", "Hypertext Testing Protocol", "Hypertext Transfer Print", "Hypertext testing Print"],
+        answer: "Hypertext Transfer protocol"
     },
     {
         title: "which is not a datatype in Javascript?",
-        a:"booolean",
-        b: "integer",
-        c: "string",
-        d:  "decimal",
-        answer: "ans4"
+        choices: ["booolean", "integer", "string", "decimal"],
+        answer: "decimal"
     },
     {
         title: "which operator can be used instead of if statement?",
-        a:"Ternary",
-        b:"spread",
-        c: "conditional",
-        d:"for each",           
-        answer: "ans1"
-    },
-  
-  ];
+        choices: ["Ternary", "spread", "conditional", "for each"],
+        answer: "Ternary"
+    }
 
-const question = document.querySelector('.questions');
-const option1 = document.querySelector('.op1');
-const option2 = document.querySelector('.op2');
-const option3 = document.querySelector('.op3');
-const option4 = document.querySelector('.op4');
+];
 
-const submit = document.querySelector('#submit')
+const allQuestionDiv = document.querySelector("#questionsDiv");
+const currentTime = document.querySelector(".currentTime");
+const timer = document.querySelector(".startTime");
+const unorderList = document.createElement("ul");
 
-let count = 0
+let penalty = 10;
+let questionIndex = 0;
+let remainingSeconds = 75;
+let score = 0;
+let interval = 0;
 
-const load_questions= ()=>{
-    const element = allQuestions[count]
-    question.innerHTML = element.title;
-    opt1.innerHTML = allQuestions[0].a;
-    option2.innerHTML = element.b;
-    option3.innerHTML = element.c;
-    option4.innerHTML = element.d;
+function render(questionIndex) {
+    allQuestionDiv.innerHTML = "";
+    unorderList.innerHTML = "";
+    for (var i = 0; i < allQuestion.length; i++) {
+        var userQuestion = allQuestion[questionIndex].title;
+        var userChoices = allQuestion[questionIndex].choices;
+        allQuestionDiv.textContent = userQuestion;
+    }
+    userChoices.forEach(function (newItem) {
+        var listItem = document.createElement("li");
+        listItem.textContent = newItem;
+        allQuestionDiv.appendChild(unorderList);
+        unorderList.appendChild(listItem);
+        listItem.addEventListener("click", (compare));
+    })
+}
+
+timer.addEventListener("click", function () {
+  if (interval === 0) {
+    interval = setInterval(function () {
+          remainingSeconds--;
+          currentTime.textContent = "Time: " + remainingSeconds;
+          if (remainingSeconds <= 0) {
+              clearInterval(interval);
+              allDone();
+              currentTime.textContent = "Time's up!";
+          }
+      }, 1000);
+  }
+  render(questionIndex);
+});
+
+
+function compare(event) {
+    var element = event.target;
+    if (element.matches("li")) {
+        var messageDiv = document.createElement("div");
+        messageDiv.setAttribute("class", "messageDiv");
+        if (element.textContent == allQuestion[questionIndex].answer) {
+            score++;
+            messageDiv.textContent = "Correct! The answer is:  " + allQuestion[questionIndex].answer;
+        } else {
+            remainingSeconds = remainingSeconds - penalty;
+            messageDiv.textContent = "Wrong! The correct answer is:  " + allQuestion[questionIndex].answer;
+        }
+
+    } questionIndex++;
+        if (questionIndex >= allQuestion.length) {
+        allDone();
+        messageDiv.textContent = "End of quiz!" + " " + "You got  " + score + "/" + allQuestion.length + " Correct!";
+        } else {
+        render(questionIndex);
+    }
+    allQuestionDiv.appendChild(messageDiv);
 
 }
-load_questions();
+function allDone() {
+  allQuestionDiv.innerHTML = "";
+  currentTime.innerHTML = "";
+  var createH1 = document.createElement("h1");
+  createH1.setAttribute("class", "createH1");
+  createH1.textContent = "All Done!"
+
+  allQuestionDiv.appendChild(createH1);
+
+  var para = document.createElement("p");
+  para.setAttribute("class", "para");
+
+  allQuestionDiv.appendChild(para);
+
+  if (remainingSeconds >= 0) {
+    var timeRemaining = remainingSeconds;
+    var para2 = document.createElement("p");
+    clearInterval(interval);
+    para.textContent = "Your final score is: " + timeRemaining;
+    allQuestionDiv.appendChild(para2);
+  }
+
+//  ********************************************** Label*************************************************
+var createLabel = document.createElement("label");
+createLabel.setAttribute("class", "createLabel");
+createLabel.textContent = "Enter your initials: ";
+questionsDiv.appendChild(createLabel);
+
+
+//  ********************************************** input*************************************************
+var createInput = document.createElement("input");
+createInput.setAttribute("type", "text");
+createInput.setAttribute("class", "initials");
+createInput.textContent = "";
+allQuestionDiv.appendChild(createInput);
+
+
+//  **********************************************submit*************************************************
+  var createSubmit = document.createElement("button");
+  createSubmit.setAttribute("type", "submit");
+  createSubmit.setAttribute("class", "submit");
+  createSubmit.textContent = "submit";
+  allQuestionDiv.appendChild(createSubmit);
+  createSubmit.addEventListener("click", function () {
+      var initials = createInput.value;
+
+      if (initials !==null) {
+          var finalScore = {
+              initials: initials,
+              score: timeRemaining
+          }
+          var totalScore = localStorage.getItem("totalScore");
+          if (totalScore === null) {
+            totalScore = [];
+          } else {
+            totalScore = JSON.parse(totalScore);
+          }
+          totalScore.push(finalScore);
+          var newScore = JSON.stringify(totalScore);
+          localStorage.setItem("totalScore", newScore);
+          window.location.replace("./scoresheet.html");
+      }
+  });
+
+}
